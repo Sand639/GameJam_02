@@ -16,6 +16,6 @@ public class Area : MonoBehaviour
 
     public void SetEventBox()
     {
-        _eventBox.StartEvent();
+        _eventBox.gameObject.SetActive(true);
     }
 }

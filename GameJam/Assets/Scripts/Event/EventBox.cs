@@ -16,6 +16,6 @@ public class EventBox : MonoBehaviour
 
     public void StartEvent()
     {
-        
+        Debug.Log("evnet");
     }
 }
