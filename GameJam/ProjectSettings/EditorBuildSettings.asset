@@ -6,13 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/RankTest/TestTitle.unity
-    guid: 8089a54ddecacba42b00d7533865da09
+    path: Assets/Scenes/TitleScene.unity
+    guid: 7ec5d2e4b57e04845a0043265053cb0e
   - enabled: 1
-    path: Assets/Scenes/RankTest/RankGame.unity
-    guid: 3f27fc2418d18c7459805a547fddf377
+    path: Assets/Scenes/GameScene.unity
+    guid: 08c2aff9f34ede14c9be5063ea139f5c
   - enabled: 1
-    path: Assets/Scenes/RankTest/SampleResult.unity
+    path: Assets/Scenes/ResultScene.unity
     guid: 2ac0a38862cea7d47a2f8652072c3dd6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -27,10 +27,11 @@ public class ScorePanelScript : MonoBehaviour
 		if (BackTitleButton != null) BackTitleButton.onClick.AddListener(RetryGame);
 		if (endGameButton != null) endGameButton.onClick.AddListener(EndGameFunc);
 		if (confirmNameButton != null) confirmNameButton.onClick.AddListener(OnConfirmNameClicked);
+		if (nameInputArea != null) nameInputArea.SetActive(false);
 
 		if (nameInputField != null)
 		{
-			nameInputField.characterLimit = 3;
+			nameInputField.characterLimit = 10;
 			nameInputField.onValueChanged.AddListener((text) => {
 				nameInputField.text = text.ToUpper();
 			});
@@ -45,7 +46,7 @@ public class ScorePanelScript : MonoBehaviour
 
 		if (nameInputField != null)
 		{
-			nameInputField.text = "AAA";
+			nameInputField.text = "PLAYER";
 			nameInputField.ActivateInputField();
 		}
 
@@ -55,11 +56,10 @@ public class ScorePanelScript : MonoBehaviour
 
 	private void OnConfirmNameClicked()
 	{
-		string finalName = "AAA";
+		string finalName = "PLAYER";
 		if (nameInputField != null && !string.IsNullOrEmpty(nameInputField.text))
 		{
-
-			finalName = nameInputField.text.PadRight(3, 'A');
+			finalName = nameInputField.text.ToUpper();
 		}
 
 		if (nameInputArea != null) nameInputArea.SetActive(false);
