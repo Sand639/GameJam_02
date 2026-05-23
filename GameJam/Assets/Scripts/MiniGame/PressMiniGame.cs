@@ -27,6 +27,8 @@ public class PressMiniGame : MonoBehaviour
     [SerializeField]
     float _gageAddAmount = 0.35f;
     float _successRate = 0.6f;
+   //終了猶予時間
+   float _finishDelay = 0.5f;
 
     [Header("サウンド設定")]
     public AudioSource audioSource; // 音を再生するスピーカー役
@@ -56,8 +58,12 @@ public class PressMiniGame : MonoBehaviour
             return;
         }
 
-        // --- Aが押された時 ---
-        if (Input.GetKeyDown(KeyCode.A) && lastPressedKey != KeyCode.A)
+        bool isLeftPressed = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
+        bool isRightPressed = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
+
+        // --- 左側（A または 左矢印）が押された時 ---
+        // 交互打ちの判定のために、左側が押された記録として代表で KeyCode.A を使う
+        if (isLeftPressed && lastPressedKey != KeyCode.A)
         {
             currentScore++;
             lastPressedKey = KeyCode.A;
@@ -65,8 +71,9 @@ public class PressMiniGame : MonoBehaviour
             if (keyD_Image != null) keyD_Image.sprite = spriteD_Up;
             UpdateUI();
         }
-        // --- Dが押された時 ---
-        else if (Input.GetKeyDown(KeyCode.D) && lastPressedKey != KeyCode.D)
+        // --- 右側（D または 右矢印）が押された時 ---
+        // 交互打ちの判定のために、右側が押された記録として代表で KeyCode.D を使う
+        else if (isRightPressed && lastPressedKey != KeyCode.D)
         {
             currentScore++;
             lastPressedKey = KeyCode.D;
@@ -123,8 +130,6 @@ public class PressMiniGame : MonoBehaviour
     private void EndMiniGame()
     {
         isPlaying = false;
-        if (miniGamePanel != null) miniGamePanel.SetActive(false);
-        Time.timeScale = 1f;
 
         float recoveryPercentage = Mathf.Clamp01((float)currentScore / maxScore * _gageAddAmount) * 100;
 
@@ -148,8 +153,8 @@ public class PressMiniGame : MonoBehaviour
             }
         }
 
-        //燃料を追加する
-        Player.RequestAddEnergy(recoveryPercentage);
+        // すぐに閉じず、終了コルーチンを呼ぶ
+        StartCoroutine(FinishRoutine(recoveryPercentage));
 
     }
 
@@ -160,4 +165,21 @@ public class PressMiniGame : MonoBehaviour
             gaugeSlider.value = (float)currentScore / maxScore;
         }
     }
+
+    private IEnumerator FinishRoutine(float recoveryPercentage)
+    {
+        // プレイヤーが連打をやめるための猶予時間 ＋ 結果を見せる時間
+        yield return new WaitForSecondsRealtime(_finishDelay);
+
+        // 溜まっていたキーボード等の入力を完全にクリア！
+        Input.ResetInputAxes();
+
+        // 入力をクリアしてから、UIを消して時間を動かす
+        if (miniGamePanel != null) miniGamePanel.SetActive(false);
+        Time.timeScale = 1f;
+
+        // 完全に終わってから燃料を追加
+        Player.RequestAddEnergy(recoveryPercentage);
+    }
+
 }
