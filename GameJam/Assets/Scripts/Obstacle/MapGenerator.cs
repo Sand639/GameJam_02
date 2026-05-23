@@ -3,54 +3,73 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    [Header("プレイヤーのTransform")]
-    public Transform playerTransform;
+    [Header("マップ（障害物）が手前に迫ってくる速度")]
+    public float scrollSpeed = 10f;
+
+    [Header("プレイヤーの後ろの削除基準座標（Z軸）")]
+    public float deleteZ = -15f;
 
     [Header("マップパーツのプレハブリスト")]
     public List<GameObject> mapPrefabs;
 
-    [Header("最初に生成しておく枚数")]
+    [Header("画面内に常に維持するマップの枚数")]
     public int initialSpawnCount = 5;
 
-    [Header("プレイヤーの何メートル先まで先読みして生成するか")]
-    public float forwardSpawnDistance = 50f;
-
-    // 次にマップを配置すべきZ座標
+    // 次にマップを配置すべきワールドZ座標
     private float nextSpawnZ = 0f;
 
-    // 生成済みのマップを管理するリスト（古いものを消す用）
+    // 生成済みのマップを管理するリスト
     private List<GameObject> activeMaps = new List<GameObject>();
 
     void Start()
     {
-        if (playerTransform == null)
-        {
-            // インスペクターで未設定の場合、Playerタグから自動取得を試みる
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null) playerTransform = player.transform;
-        }
-
-        // 最初にいくつかマップを生成しておく
+        // 最初に指定枚数のマップを前方にズラッと並べる
         for (int i = 0; i < initialSpawnCount; i++)
         {
-            // 最初の一枚目は固定にするか、ランダムにするか選べます
             SpawnMap(Random.Range(0, mapPrefabs.Count));
         }
     }
 
     void Update()
     {
-        if (playerTransform == null || mapPrefabs.Count == 0) return;
+        if (mapPrefabs.Count == 0) return;
 
-        // プレイヤーの現在位置から「先読み距離」の間にマップが足りなくなったら自動生成
-        if (playerTransform.position.z + forwardSpawnDistance > nextSpawnZ)
+        // 1. リストにあるすべてのマップを手前（-Z方向）に移動させる
+        float moveDistance = scrollSpeed * Time.deltaTime;
+        foreach (GameObject map in activeMaps)
         {
-            SpawnMap(Random.Range(0, mapPrefabs.Count));
-
-            // 【オマケ機能】プレイヤーの後ろに回りすぎた古いマップを削除して軽くする
-            if (activeMaps.Count > initialSpawnCount + 2)
+            if (map != null)
             {
-                RemoveOldestMap();
+                map.transform.position += new Vector3(0f, 0f, -moveDistance);
+            }
+        }
+
+        // 2. マップが手前に動いた分、次に奥に生成する位置（nextSpawnZ）も手前に引く
+        nextSpawnZ -= moveDistance;
+
+        // 3. 一番手前（古い）のマップが、削除基準を完全に通り過ぎたかチェック
+        if (activeMaps.Count > 0)
+        {
+            GameObject oldestMap = activeMaps[0];
+            BoxCollider boxCol = oldestMap.GetComponent<BoxCollider>();
+
+            if (boxCol != null)
+            {
+                float scaleZ = oldestMap.transform.localScale.z;
+                // マップの「奥の端（出口）」のローカル座標を計算
+                float localEndZ = (boxCol.center.z + (boxCol.size.z / 2f)) * scaleZ;
+                // ワールド座標での「奥の端」を計算
+                float worldEndZ = oldestMap.transform.position.z + localEndZ;
+
+                // マップの出口が削除位置（プレイヤーの後ろ）より後ろに行き過ぎたら
+                if (worldEndZ < deleteZ)
+                {
+                    // 古いマップを削除
+                    RemoveOldestMap();
+
+                    // 【ご要望のポイント】削除したのと同時に、一番奥に新しいマップを1枚生成
+                    SpawnMap(Random.Range(0, mapPrefabs.Count));
+                }
             }
         }
     }
@@ -62,7 +81,6 @@ public class MapGenerator : MonoBehaviour
     {
         GameObject prefab = mapPrefabs[prefabIndex];
 
-        // 【変更点】Colliderではなく「BoxCollider」として取得する
         BoxCollider boxCol = prefab.GetComponent<BoxCollider>();
         if (boxCol == null)
         {
@@ -70,15 +88,17 @@ public class MapGenerator : MonoBehaviour
             return;
         }
 
-        // 【変更点】boundsではなく、BoxColliderのSizeの値を直接読み取る
-        // ※プレハブ自体のScaleが変更されていても対応できるように掛け算します
-        float mapLength = boxCol.size.z * prefab.transform.localScale.z;
+        float scaleZ = prefab.transform.localScale.z;
+        float mapLength = boxCol.size.z * scaleZ;
 
-        // 次の配置位置（nextSpawnZ）に「マップの長さの半分」を足した場所が中心座標
-        float spawnCenterZ = nextSpawnZ + (mapLength / 2f);
+        // プレハブの基準点から見て「マップの一番手前の端（入り口）」のローカル座標
+        float localGridStartZ = (boxCol.center.z - (boxCol.size.z / 2f)) * scaleZ;
 
-        // 生成位置を決定
-        Vector3 spawnPosition = new Vector3(0f, 0f, spawnCenterZ);
+        // 前のマップの終わりに、次のマップの入り口をピッタリ合わせるワールド座標
+        float spawnWorldZ = nextSpawnZ - localGridStartZ;
+
+        // 生成位置を決定（XとYはプレハブの設定を維持）
+        Vector3 spawnPosition = new Vector3(prefab.transform.position.x, prefab.transform.position.y, spawnWorldZ);
 
         // マップを生成
         GameObject spawnedMap = Instantiate(prefab, spawnPosition, Quaternion.identity);
@@ -87,7 +107,6 @@ public class MapGenerator : MonoBehaviour
         // 次のマップのために、配置したマップの長さ分だけZ座標を進める
         nextSpawnZ += mapLength;
     }
-
 
     /// <summary>
     /// 一番古い（後ろにある）マップを削除する
