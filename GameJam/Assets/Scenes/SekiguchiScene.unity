@@ -570,9 +570,29 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: mapPrefabs.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: 'mapPrefabs.Array.data[0]'
       value: 
       objectReference: {fileID: 3829613075534453874, guid: d1486da6bfb9c364fbfcefb03d26018f, type: 3}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: 'mapPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 3829613075534453874, guid: 387594186d7ad6a44b39f5e4836421dd, type: 3}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: 'mapPrefabs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 3829613075534453874, guid: 4dead9e0e28f04f45be1d689ce041181, type: 3}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: 'mapPrefabs.Array.data[3]'
+      value: 
+      objectReference: {fileID: 7200662969841952106, guid: bae306c0b00edb247be48ba6899f066c, type: 3}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: 'mapPrefabs.Array.data[4]'
+      value: 
+      objectReference: {fileID: 7200662969841952106, guid: e2ba3cf9e82bcfa459299bd991ca8351, type: 3}
     - target: {fileID: 6925224391869385147, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: m_Name
       value: MapManager
