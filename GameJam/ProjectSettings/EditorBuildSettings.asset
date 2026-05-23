@@ -6,6 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Title_kari.unity
+    guid: 170411a151e071844bab81c3220f6f41
+  - enabled: 1
+    path: Assets/Scenes/Game_kari.unity
+    guid: 309746cce8a85f6459fcd42310cb5d71
+  - enabled: 1
+    path: Assets/Scenes/Result_kari.unity
+    guid: 28722cd0ef267394e80ad1bddb78d960
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
