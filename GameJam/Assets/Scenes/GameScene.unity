@@ -5335,8 +5335,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   _energy: 100
   _energyMax: 100
-  _energyCost: 0.03
-  _energyHitDamage: 5
+  _energyCost: 5
+  _energyHitDamage: 8
   _coinValue: 0
   _playerModel: {fileID: 761279888}
   _playerAnimIdleShakePower: 0.01
@@ -5353,11 +5353,11 @@ MonoBehaviour:
   _coinLayer:
     serializedVersion: 2
     m_Bits: 256
-  _coinRadius: 1
+  _coinRadius: 0.35
   _eventBoxLayer:
     serializedVersion: 2
     m_Bits: 128
-  _eventBoxRadius: 1
+  _eventBoxRadius: 0.35
 --- !u!4 &443235488
 Transform:
   m_ObjectHideFlags: 0
