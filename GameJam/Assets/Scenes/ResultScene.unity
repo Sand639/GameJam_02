@@ -2228,7 +2228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HighscoreHandler
   maxCount: 7
-  filename: HighScore.json
+  filename: Score.json
 --- !u!114 &1681242901
 MonoBehaviour:
   m_ObjectHideFlags: 0
