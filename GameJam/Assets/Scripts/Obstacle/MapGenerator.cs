@@ -31,6 +31,8 @@ public class MapGenerator : MonoBehaviour
 
     // 現在までにイベントボックス付きマップが何回生成されたかのカウンター
     private int currentEventBoxCount = 0;
+    // 「1巡」の中身を管理するバッグ（袋）
+    private List<int> randomBag = new List<int>();
 
     void Start()
     {
@@ -45,7 +47,7 @@ public class MapGenerator : MonoBehaviour
             else
             {
                 // 指定枠がない、または使い切った場合は通常通りランダム生成
-                SpawnMap(mapPrefabs[Random.Range(0, mapPrefabs.Count)]);
+                SpawnMap(mapPrefabs[GetNextBagIndex()]);
             }
         }
     }
@@ -82,7 +84,7 @@ public class MapGenerator : MonoBehaviour
                     RemoveOldestMap();
 
                     // 【変更】追加される新しいマップは常にランダム
-                    SpawnMap(mapPrefabs[Random.Range(0, mapPrefabs.Count)]);
+                    SpawnMap(mapPrefabs[GetNextBagIndex()]);
                 }
             }
         }
@@ -156,4 +158,46 @@ public class MapGenerator : MonoBehaviour
         activeMaps.RemoveAt(0);
         Destroy(oldestMap);
     }
+
+    /// <summary>
+    /// テトリスの「バッグシステム（N種1巡）」方式で次のインデックスを取得する
+    /// </summary>
+    private int GetNextBagIndex()
+    {
+        // バッグが空になったら、全種類のインデックスを入れ直してシャッフルする（新しい袋を作る）
+        if (randomBag.Count == 0)
+        {
+            RefillAndShuffleBag();
+        }
+
+        // バッグの先頭から1つ取り出す
+        int nextIndex = randomBag[0];
+
+        // 取り出したものは袋から消す
+        randomBag.RemoveAt(0);
+
+        return nextIndex;
+    }
+
+    /// <summary>
+    /// バッグにプレハブの種類を全部入れてシャッフルする
+    /// </summary>
+    private void RefillAndShuffleBag()
+    {
+        // 0 から (プレハブの種類数 - 1) までの数字を順番にバッグに入れる
+        for (int i = 0; i < mapPrefabs.Count; i++)
+        {
+            randomBag.Add(i);
+        }
+
+        // 入れた数字をシャッフルする（Fisher-Yatesアルゴリズム）
+        for (int i = randomBag.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            int temp = randomBag[i];
+            randomBag[i] = randomBag[j];
+            randomBag[j] = temp;
+        }
+    }
+
 }
