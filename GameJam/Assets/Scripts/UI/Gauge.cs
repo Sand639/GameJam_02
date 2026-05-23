@@ -19,7 +19,7 @@ public class Gauge : MonoBehaviour
     //    currentValue -= amount;
     //    currentValue = Mathf.Clamp(currentValue, 0, maxValue);
     //}
-
+    //ゲージの更新
     void UpdateGauge()
     {
         float current = Player.GetEnergy();

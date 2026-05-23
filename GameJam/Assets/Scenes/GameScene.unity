@@ -5547,6 +5547,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8288520718054859334, guid: 19c259fda9a3e5f4d94e3a17bea8af96, type: 3}
+      propertyPath: scoreAddSecond
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8288520718054859334, guid: 19c259fda9a3e5f4d94e3a17bea8af96, type: 3}
+      propertyPath: scorePerSecond
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8288520718054859334, guid: 19c259fda9a3e5f4d94e3a17bea8af96, type: 3}
       propertyPath: scorePopupPrefab
       value: 
       objectReference: {fileID: 8434659617753514190, guid: 6f69741ccd187334fab5d22f11297e20, type: 3}
