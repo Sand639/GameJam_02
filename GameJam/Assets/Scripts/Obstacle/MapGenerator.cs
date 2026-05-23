@@ -21,6 +21,9 @@ public class MapGenerator : MonoBehaviour
     // 生成済みのマップを管理するリスト
     private List<GameObject> activeMaps = new List<GameObject>();
 
+    [SerializeField] private int _eventBoxSpan = 8;
+    private int _areaCount = 0;
+
     void Start()
     {
         // 最初に指定枚数のマップを前方にズラッと並べる
@@ -106,6 +109,14 @@ public class MapGenerator : MonoBehaviour
 
         // 次のマップのために、配置したマップの長さ分だけZ座標を進める
         nextSpawnZ += mapLength;
+
+        if (_areaCount == _eventBoxSpan)
+        {
+            spawnedMap.GetComponent<Area>().SetEventBox();
+            _areaCount = 0;
+        }
+
+        _areaCount++;
     }
 
     /// <summary>
