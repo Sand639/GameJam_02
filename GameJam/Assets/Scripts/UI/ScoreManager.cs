@@ -9,6 +9,7 @@ public class ScoreManager : MonoBehaviour
 
     public GameObject scorePopupPrefab;
     public Transform canvas;
+    [Header("スコアポップアップの位置調整((スコアテキスト基準)")]
     public float popupX = 150f;
     public float popupY = 0f;
     private int score = 0;
