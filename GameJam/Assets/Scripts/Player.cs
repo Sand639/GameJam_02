@@ -154,7 +154,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        _energy -= _energyCost;
+        _energy -= _energyCost * Time.deltaTime;
 
         if (_energy <= 0)
         {
