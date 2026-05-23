@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af972065f7f0b24aa3490eb48fd8d47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  titleSceneName: TestTitle
+  titleSceneName: TitleScene
   gameSceneName: RankGame
-  resultSceneName: SampleResult
+  resultSceneName: ResultScene

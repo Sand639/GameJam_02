@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -84,11 +84,11 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if(_lanePos < 1) _lanePos++;
+            if (_lanePos < 1) _lanePos++;
         }
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if(_lanePos > -1) _lanePos--;
+            if (_lanePos > -1) _lanePos--;
         }
 
         {
@@ -111,7 +111,7 @@ public class Player : MonoBehaviour
             s_isAddRequested = false;
         }
 
-        if(IsTargetInRange())
+        if (IsTargetInRange())
         {
             if (!_isTargetHit)
             {
@@ -161,11 +161,16 @@ public class Player : MonoBehaviour
             _isDead = true;
             _energy = 0;
 
-            //一応
-            Destroy(gameObject);
+            if(GameManager.Instance != null)
+            {
+				GameManager.Instance.SaveAndGoToResult(ScoreManager.instance.GetScore());
+			}
+			//一応
+			Destroy(gameObject);
             Debug.Log("Player is dead.");
+
         }
-        
+
         s_energy = _energy;
         s_energyMax = _energyMax;
         s_coin = _coinValue;
