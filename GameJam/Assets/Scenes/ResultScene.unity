@@ -2243,7 +2243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RankSystem
   highscoreHandler: {fileID: 1681242900}
   scorePanel: {fileID: 254700280}
-  jsonFilename: HighScore.json
+  jsonFilename: Score.json
   maxCount: 7
 --- !u!4 &1681242902
 Transform:

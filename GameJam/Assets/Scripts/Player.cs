@@ -161,9 +161,14 @@ public class Player : MonoBehaviour
             _isDead = true;
             _energy = 0;
 
-            //一応
-            Destroy(gameObject);
+            if(GameManager.Instance != null)
+            {
+				GameManager.Instance.SaveAndGoToResult(ScoreManager.instance.GetScore());
+			}
+			//一応
+			Destroy(gameObject);
             Debug.Log("Player is dead.");
+
         }
 
         s_energy = _energy;
