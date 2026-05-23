@@ -17,21 +17,31 @@ public class ScoreManager : MonoBehaviour
     public int scorePerSecond = 10;
     [Header("スコアが加算される時間")]
     public float scoreAddSecond = 1.0f;
+    [Header("コインをとったときのスコア")]
+    public int Coinscore=10;
     // 毎秒スコア加算のタイマー
     private float timer = 0f;
-
+    private int previousCoin = 0;
+    
     public static ScoreManager instance;
 
     // シングルトンの初期化
     void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         instance = this;
+        DontDestroyOnLoad(gameObject); // ←これ追加！
     }
     void Start()
     {
         UpdateScore();
+        previousCoin = Player.GetCoin(); // 初期値
 
-       
     }
 
     void Update()
@@ -44,6 +54,8 @@ public class ScoreManager : MonoBehaviour
             AddScore(scorePerSecond, false); // ポップアップなし
             timer = 0f;
         }
+        CheckCoinIncrease(); // ←これ追加
+
     }
     //スコアが追加される関数showPopupはスコアポップアップを表示するかどうかのフラグ
     public void AddScore(int amount, bool showPopup = true)
@@ -68,5 +80,24 @@ public class ScoreManager : MonoBehaviour
     void UpdateScore()
     {
         scoreText.text = "Score : " + score.ToString("0000");
+    }
+
+    public int GetScore()
+    {
+        return score;
+    }
+
+    void CheckCoinIncrease()
+    {
+        int currentCoin = Player.GetCoin();
+
+        int diff = currentCoin - previousCoin;
+
+        if (diff > 0)
+        {
+            AddScore(diff * Coinscore, true);
+        }
+
+        previousCoin = currentCoin;
     }
 }

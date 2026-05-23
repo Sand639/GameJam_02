@@ -39,8 +39,9 @@ public class Coin : MonoBehaviour
     /// </summary>
     private void AddScore(int amount)
     {
+        
         // 開発中の確認用ログ（実装後に消してOKです）
         Debug.Log($"コイン取得！スコアを {amount} 加算する処理をここに書く");
-        ScoreManager.instance.AddScore(amount);
+       
     }
 }
