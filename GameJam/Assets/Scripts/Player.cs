@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] float _energy = s_energy;
     [SerializeField] float _energyMax = s_energyMax;
     [SerializeField] float _energyCost = 0.03f;
+    [SerializeField] float _energyHitDamage = 5.0f;
 
     [SerializeField] GameObject _playerModel = null;
     [SerializeField] float _playerAnimIdleShakePower = 1;
@@ -22,10 +23,19 @@ public class Player : MonoBehaviour
     [SerializeField] float _laneMiddlePlayerPosX = 0;
     [SerializeField] float _laneLeftPlayerPosX = -1.0f;
     [SerializeField] float _laneRightPlayerPosX = 1.0f;
+    [SerializeField] LayerMask _targetLayer;
+    [SerializeField] float _targetradius = 5f;
 
     bool _isDead = false;
+    bool _isTargetHit = false;
 
     int _lanePos = 0;
+
+    bool IsTargetInRange()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, _targetradius, _targetLayer);
+        return hits.Length > 0;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -81,7 +91,24 @@ public class Player : MonoBehaviour
         if (s_isAddRequested)
         {
             AddEnergy(s_addEnergy);
+            s_addEnergy = 0;
             s_isAddRequested = false;
+        }
+
+        if(IsTargetInRange())
+        {
+            if (!_isTargetHit)
+            {
+                Camera.RequestShake(1.0f, 0.5f);
+                _energy -= _energyHitDamage;
+
+                //Debug.Log("Target Hit!");
+            }
+            _isTargetHit = true;
+        }
+        else
+        {
+            _isTargetHit = false;
         }
 
         _energy -= _energyCost;
@@ -100,6 +127,21 @@ public class Player : MonoBehaviour
         s_energyMax = _energyMax;
     }
 
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (LayerMask.LayerToName(other.gameObject.layer) == "Enemy")
+    //    {
+    //        Debug.Log("Hit Enemy");
+    //    }
+    //}
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if (LayerMask.LayerToName(collision.gameObject.layer) == "Enemy")
+    //    {
+    //        Debug.Log("Collided with Enemy");
+    //    }
+    //}
+
     public void AddEnergy(float amount)
     {
         _energy += amount;
@@ -108,11 +150,10 @@ public class Player : MonoBehaviour
             _energy = _energyMax;
         }
     }
-
     public static void RequestAddEnergy(float amount)
     {
         s_isAddRequested = true;
-        s_addEnergy = amount;
+        s_addEnergy += amount;
     }
 
     public static float GetEnergy()
