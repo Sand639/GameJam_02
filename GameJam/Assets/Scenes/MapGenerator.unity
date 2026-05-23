@@ -865,9 +865,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 258523388182456395, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 482135795383196760, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 522237269148637317, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
       propertyPath: m_Pivot.x
@@ -949,14 +953,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 881458987443289343, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3875242224500645002, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5185911871268896871, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
       propertyPath: m_Name
       value: MiniGameCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7427404175654228358, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
+      propertyPath: failureSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 5712313d5e83728449a67a662efd36d7, type: 3}
+    - target: {fileID: 7427404175654228358, guid: 08e2153fd668a9743bf23f80071fb424, type: 3}
+      propertyPath: successSound
+      value: 
+      objectReference: {fileID: 8300000, guid: c919738e71688114cb81760d491a33e9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
