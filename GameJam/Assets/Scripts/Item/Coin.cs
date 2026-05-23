@@ -42,6 +42,6 @@ public class Coin : MonoBehaviour
         
         // 開発中の確認用ログ（実装後に消してOKです）
         Debug.Log($"コイン取得！スコアを {amount} 加算する処理をここに書く");
-       
+        ScoreManager.instance.AddScore(amount);
     }
 }
