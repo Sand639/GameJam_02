@@ -8,7 +8,7 @@ public class EventBox : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // シーン内にある FuelMiniGame スクリプトを探して起動する
-            FuelMiniGame miniGame = FindFirstObjectByType<FuelMiniGame>();
+            PressMiniGame miniGame = FindFirstObjectByType<PressMiniGame>();
 
             if (miniGame != null)
             {
