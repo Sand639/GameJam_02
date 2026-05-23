@@ -15,18 +15,22 @@ public class MapGenerator : MonoBehaviour
     [Header("画面内に常に維持するマップの枚数")]
     public int initialSpawnCount = 5;
 
-    // 次にマップを配置すべきワールドZ座標
-    private float nextSpawnZ = 0f;
+    [Header("--- イベントボックスの設定 ---")]
+    [Tooltip("プレハブの中にあるイベントボックスの『オブジェクト名』を正確に入力してください")]
+    public string eventBoxName = "EventBox";
 
-    [SerializeField] private int _eventBoxSpan = 8;
-    private int _areaCount = 0;
+    [Tooltip("何回目でイベントボックスを出現させるか（例：3なら3回に1回出現）")]
+    public int showEventBoxCount = 3;
 
     // 生成済みのマップを管理するリスト
     private List<GameObject> activeMaps = new List<GameObject>();
 
+    // 現在までにイベントボックス付きマップが何回生成されたかのカウンター
+    private int currentEventBoxCount = 0;
+
     void Start()
     {
-        // 最初に指定枚数のマップを前方にズラッと並べる
+        // 最初に画面内に配置するマップを生成
         for (int i = 0; i < initialSpawnCount; i++)
         {
             SpawnMap(Random.Range(0, mapPrefabs.Count));
@@ -37,7 +41,7 @@ public class MapGenerator : MonoBehaviour
     {
         if (mapPrefabs.Count == 0) return;
 
-        // 1. リストにあるすべてのマップを手前（-Z方向）に移動させる
+        // マップ全体を手前に移動させる
         float moveDistance = scrollSpeed * Time.deltaTime;
         foreach (GameObject map in activeMaps)
         {
@@ -47,10 +51,7 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        // 2. マップが手前に動いた分、次に奥に生成する位置（nextSpawnZ）も手前に引く
-        nextSpawnZ -= moveDistance;
-
-        // 3. 一番手前（古い）のマップが、削除基準を完全に通り過ぎたかチェック
+        // 一番手前のマップが削除ラインを超えたかチェック
         if (activeMaps.Count > 0)
         {
             GameObject oldestMap = activeMaps[0];
@@ -59,18 +60,14 @@ public class MapGenerator : MonoBehaviour
             if (boxCol != null)
             {
                 float scaleZ = oldestMap.transform.localScale.z;
-                // マップの「奥の端（出口）」のローカル座標を計算
                 float localEndZ = (boxCol.center.z + (boxCol.size.z / 2f)) * scaleZ;
-                // ワールド座標での「奥の端」を計算
                 float worldEndZ = oldestMap.transform.position.z + localEndZ;
 
-                // マップの出口が削除位置（プレイヤーの後ろ）より後ろに行き過ぎたら
+                // 削除ラインを越えたら
                 if (worldEndZ < deleteZ)
                 {
-                    // 古いマップを削除
                     RemoveOldestMap();
-
-                    // 【ご要望のポイント】削除したのと同時に、一番奥に新しいマップを1枚生成
+                    // 新しいマップを一番奥に追加
                     SpawnMap(Random.Range(0, mapPrefabs.Count));
                 }
             }
@@ -78,7 +75,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     /// <summary>
-    /// 指定されたインデックスのマッププレハブをサイズ考慮して生成する
+    /// リストの最後尾のマップにピッタリくっつけてマップを生成する
     /// </summary>
     void SpawnMap(int prefabIndex)
     {
@@ -91,36 +88,54 @@ public class MapGenerator : MonoBehaviour
             return;
         }
 
+        // 新しく生成するマップの「入り口」のローカル座標を計算
         float scaleZ = prefab.transform.localScale.z;
-        float mapLength = boxCol.size.z * scaleZ;
-
-        // プレハブの基準点から見て「マップの一番手前の端（入り口）」のローカル座標
         float localGridStartZ = (boxCol.center.z - (boxCol.size.z / 2f)) * scaleZ;
 
-        // 前のマップの終わりに、次のマップの入り口をピッタリ合わせるワールド座標
-        float spawnWorldZ = nextSpawnZ - localGridStartZ;
+        // 【超重要変更点】目標とするZ座標（1つ前のマップの出口）を計算
+        float targetZ = 0f;
+        if (activeMaps.Count > 0)
+        {
+            // すでに生成されているマップがあれば、その「一番最後」のマップを取得
+            GameObject lastMap = activeMaps[activeMaps.Count - 1];
+            BoxCollider lastBox = lastMap.GetComponent<BoxCollider>();
 
-        // 生成位置を決定（XとYはプレハブの設定を維持）
+            // 一番最後のマップの「出口（お尻）」のワールド座標を計算
+            float lastScaleZ = lastMap.transform.localScale.z;
+            float lastLocalEndZ = (lastBox.center.z + (lastBox.size.z / 2f)) * lastScaleZ;
+            targetZ = lastMap.transform.position.z + lastLocalEndZ;
+        }
+
+        // 1つ前のマップのお尻（targetZ）に、新しいマップの入り口（localGridStartZ）を合わせる
+        float spawnWorldZ = targetZ - localGridStartZ;
+
         Vector3 spawnPosition = new Vector3(prefab.transform.position.x, prefab.transform.position.y, spawnWorldZ);
-
-        // マップを生成
         GameObject spawnedMap = Instantiate(prefab, spawnPosition, Quaternion.identity);
         activeMaps.Add(spawnedMap);
 
-        // 次のマップのために、配置したマップの長さ分だけZ座標を進める
-        nextSpawnZ += mapLength;
-
-        if (_areaCount == _eventBoxSpan)
+        // イベントボックスの出現制御
+        foreach (Transform child in spawnedMap.GetComponentsInChildren<Transform>(true))
         {
-            spawnedMap.GetComponent<Area>().SetEventBox();
-            _areaCount = 0;
-        }
+            if (child.name == eventBoxName)
+            {
+                currentEventBoxCount++;
 
-        _areaCount++;
+                if (currentEventBoxCount >= showEventBoxCount)
+                {
+                    child.gameObject.SetActive(true);
+                    currentEventBoxCount = 0;
+                }
+                else
+                {
+                    child.gameObject.SetActive(false);
+                }
+                break;
+            }
+        }
     }
 
     /// <summary>
-    /// 一番古い（後ろにある）マップを削除する
+    /// 最も古いマップを削除する
     /// </summary>
     void RemoveOldestMap()
     {
