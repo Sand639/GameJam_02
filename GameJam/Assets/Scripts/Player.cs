@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
@@ -31,6 +32,10 @@ public class Player : MonoBehaviour
     [SerializeField] float _coinRadius = 1f;
     [SerializeField] LayerMask _eventBoxLayer;
     [SerializeField] float _eventBoxRadius = 1f;
+
+    [Header("死亡時の演出")]
+    [SerializeField] GameObject _explosionPrefab = null; // 爆発エフェクト
+    [SerializeField] float _deathDelay = 1.0f;           // 遷移までの待機時間
 
     bool _isDead = false;
     bool _isTargetHit = false;
@@ -156,25 +161,58 @@ public class Player : MonoBehaviour
 
         _energy -= _energyCost;
 
+        // エネルギーが0以下になったら死亡処理へ
         if (_energy <= 0)
         {
-            _isDead = true;
-            _energy = 0;
-
-            if(GameManager.Instance != null)
-            {
-				GameManager.Instance.SaveAndGoToResult(ScoreManager.instance.GetScore());
-			}
-			//一応
-			Destroy(gameObject);
-            Debug.Log("Player is dead.");
-
+            Die();
+            return; // 死亡処理に入ったら、これ以降の更新はストップ
         }
 
         s_energy = _energy;
         s_energyMax = _energyMax;
         s_coin = _coinValue;
     }
+
+
+    private void Die()
+    {
+        _isDead = true;
+        _energy = 0;
+        s_energy = 0;
+        Debug.Log("Player is dead. Starting explosion sequence...");
+
+        // 1. 爆発エフェクトをプレイヤーの現在位置に生成
+        if (_explosionPrefab != null)
+        {
+            Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        }
+
+        // 2. プレイヤーの見た目だけを非表示にする（Destroyするとコルーチンが止まるため）
+        if (_playerModel != null)
+        {
+            _playerModel.SetActive(false);
+        }
+
+        // 3. コルーチンを呼び出して1秒待機へ
+        StartCoroutine(DeathSequence());
+    }
+
+    // 1秒待ってからシーン遷移するコルーチン
+    private IEnumerator DeathSequence()
+    {
+        // _deathDelay秒待つ
+        yield return new WaitForSeconds(_deathDelay);
+
+        // スコアを保存してリザルト画面へ遷移
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.SaveAndGoToResult(ScoreManager.instance.GetScore());
+        }
+
+        // 最後にプレイヤーオブジェクトを完全に消去
+        Destroy(gameObject);
+    }
+
 
     //private void OnTriggerEnter(Collider other)
     //{
