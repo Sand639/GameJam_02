@@ -2,20 +2,16 @@ using UnityEngine;
 
 public class EventBox : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
+    public void MiniGameStart()
+    {    
+        // シーン内にある FuelMiniGame スクリプトを探して起動する
+        PressMiniGame miniGame = FindFirstObjectByType<PressMiniGame>();
+
+        miniGame.StartMiniGame();
+
+        // イベントボックス自身は役割を終えたので消す
+        Destroy(gameObject);
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void StartEvent()
-    {
-        Debug.Log("evnet");
-    }
 }
