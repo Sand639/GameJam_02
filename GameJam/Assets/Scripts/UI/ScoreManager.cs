@@ -13,10 +13,16 @@ public class ScoreManager : MonoBehaviour
     public float popupX = 150f;
     public float popupY = 0f;
     private int score = 0;
+    [Header("毎秒スコア")]
+    public int scorePerSecond = 10;
+    [Header("スコアが加算される時間")]
+    public float scoreAddSecond = 1.0f;
+    // 毎秒スコア加算のタイマー
+    private float timer = 0f;
 
     public static ScoreManager instance;
 
-
+    // シングルトンの初期化
     void Awake()
     {
         instance = this;
@@ -28,17 +34,28 @@ public class ScoreManager : MonoBehaviour
        
     }
 
-    public void AddScore(int amount)
+    void Update()
+    {
+        // タイマーを更新
+        timer += Time.deltaTime;
+        // 一定時間ごとにスコアを加算
+        if (timer >= scoreAddSecond && Player.GetEnergy() > 0)
+        {
+            AddScore(scorePerSecond, false); // ポップアップなし
+            timer = 0f;
+        }
+    }
+    //スコアが追加される関数showPopupはスコアポップアップを表示するかどうかのフラグ
+    public void AddScore(int amount, bool showPopup = true)
     {
         score += amount;
         UpdateScore();
 
+        if (!showPopup) return;
+
         GameObject obj = Instantiate(scorePopupPrefab, canvas);
 
-        // スコアテキストの位置に合わせる
         obj.transform.position = scoreText.transform.position;
-
-        // ずらす
         obj.transform.position += new Vector3(popupX, popupY, 0f);
 
         TextMeshProUGUI text = obj.GetComponentInChildren<TextMeshProUGUI>();
@@ -46,6 +63,8 @@ public class ScoreManager : MonoBehaviour
 
         Destroy(obj, 1f);
     }
+
+    // スコアテキストを更新する関数
     void UpdateScore()
     {
         scoreText.text = "Score : " + score.ToString("0000");
