@@ -13,4 +13,9 @@ public class Area : MonoBehaviour
     {
         
     }
+
+    public void SetEventBox()
+    {
+        _eventBox.StartEvent();
+    }
 }
