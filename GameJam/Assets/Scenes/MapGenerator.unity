@@ -577,13 +577,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 478413096}
     - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
-      propertyPath: mapPrefabs.Array.size
-      value: 2
+      propertyPath: forwardSpawnDistance
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
-      propertyPath: 'mapPrefabs.Array.data[1]'
+      propertyPath: 'mapPrefabs.Array.data[0]'
       value: 
-      objectReference: {fileID: 989047233561945931, guid: be35a5bf499536d45a2d606b5d328ccf, type: 3}
+      objectReference: {fileID: 800711742573730397, guid: 38d4878906e63034eafebcab3568e868, type: 3}
+
     - target: {fileID: 6925224391869385147, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: m_Name
       value: MapManager
