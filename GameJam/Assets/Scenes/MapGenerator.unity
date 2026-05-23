@@ -563,6 +563,14 @@ PrefabInstance:
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 478413096}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: forwardSpawnDistance
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: 'mapPrefabs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 800711742573730397, guid: 38d4878906e63034eafebcab3568e868, type: 3}
     - target: {fileID: 6925224391869385147, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: m_Name
       value: MapManager
