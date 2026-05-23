@@ -559,7 +559,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: initialSpawnCount
-      value: 5
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: showEventBoxCount
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: forwardSpawnDistance
