@@ -24,6 +24,11 @@ public class PressMiniGame : MonoBehaviour
     [Header("ゲージの参照")]
     public Slider gaugeSlider;
 
+    [Header("サウンド設定")]
+    public AudioSource audioSource; // 音を再生するスピーカー役
+    public AudioClip successSound;  // 成功時の音データ
+    public AudioClip failureSound;  // 失敗時の音データ
+
     private bool isPlaying = false;
     private float currentTimer;
     private int currentScore;
@@ -122,6 +127,24 @@ public class PressMiniGame : MonoBehaviour
         Debug.Log($"ミニゲーム終了！ 連打回数: {currentScore} 回。 燃料を {recoveryPercentage * 100}% 回復！");
 
         //ここに燃料を追加するコードを追加してください
+
+        if(currentScore > maxScore * 0.6)
+        {
+            // 成功音をならす
+            if (audioSource != null && successSound != null)
+            {
+                // PlayOneShotを使うと、音が重なっても途切れずに再生されます
+                audioSource.PlayOneShot(successSound);
+            }
+        }
+        else
+        {
+            // 失敗音をならす
+            if (audioSource != null && failureSound != null)
+            {
+                audioSource.PlayOneShot(failureSound);
+            }
+        }
 
         // 例: Player.Instance.AddFuel(recoveryPercentage);
 
