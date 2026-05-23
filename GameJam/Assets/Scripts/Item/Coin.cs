@@ -5,11 +5,17 @@ public class Coin : MonoBehaviour
     [Header("このコインを取った時のスコア")]
     public int scoreValue = 10;
 
+    [SerializeField] private GameObject _rotateObj;
     [SerializeField] private float _rotateSpeed;
+    float _curRotateSpeed = 0.0f;
 
     private void Update()
     {
-        transform.eulerAngles += new Vector3(0.0f, _rotateSpeed,0.0f);
+        _curRotateSpeed += _rotateSpeed * Time.deltaTime;
+        if (_rotateObj != null)
+        {
+            _rotateObj.transform.localEulerAngles = new Vector3(0.0f, _curRotateSpeed, 0.0f);
+        }
     }
 
     // 何かがこのオブジェクトの当たり判定に入った瞬間に呼ばれる関数

@@ -23,6 +23,15 @@ public class PressMiniGame : MonoBehaviour
 
     [Header("ゲージの参照")]
     public Slider gaugeSlider;
+    [Header("パラメータ")]
+    [SerializeField]
+    float _gageAddAmount = 0.35f;
+    float _successRate = 0.6f;
+
+    [Header("サウンド設定")]
+    public AudioSource audioSource; // 音を再生するスピーカー役
+    public AudioClip successSound;  // 成功時の音データ
+    public AudioClip failureSound;  // 失敗時の音データ
 
     private bool isPlaying = false;
     private float currentTimer;
@@ -117,13 +126,30 @@ public class PressMiniGame : MonoBehaviour
         if (miniGamePanel != null) miniGamePanel.SetActive(false);
         Time.timeScale = 1f;
 
-        //  /  5は補正
-        float recoveryPercentage = Mathf.Clamp01((float)currentScore / maxScore / 5);
-        Debug.Log($"ミニゲーム終了！ 連打回数: {currentScore} 回。 燃料を {recoveryPercentage * 100}% 回復！");
+        float recoveryPercentage = Mathf.Clamp01((float)currentScore / maxScore * _gageAddAmount) * 100;
 
-        //ここに燃料を追加するコードを追加してください
+        Debug.Log($"ミニゲーム終了！ 連打回数: {currentScore} 回。 燃料を {recoveryPercentage}% 回復！");
 
-        // 例: Player.Instance.AddFuel(recoveryPercentage);
+        if(currentScore > maxScore * _successRate)
+        {
+            // 成功音をならす
+            if (audioSource != null && successSound != null)
+            {
+                // PlayOneShotを使うと、音が重なっても途切れずに再生されます
+                audioSource.PlayOneShot(successSound);
+            }
+        }
+        else
+        {
+            // 失敗音をならす
+            if (audioSource != null && failureSound != null)
+            {
+                audioSource.PlayOneShot(failureSound);
+            }
+        }
+
+        //燃料を追加する
+        Player.RequestAddEnergy(recoveryPercentage);
 
     }
 

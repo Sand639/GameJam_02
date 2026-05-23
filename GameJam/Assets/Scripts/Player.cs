@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
 {
     static float s_energy = 100;
     static float s_energyMax = 100;
+    static int s_coin = 0;
 
     static bool s_isAddRequested = false;
     static float s_addEnergy = 0;
@@ -13,6 +14,7 @@ public class Player : MonoBehaviour
     [SerializeField] float _energyMax = s_energyMax;
     [SerializeField] float _energyCost = 0.03f;
     [SerializeField] float _energyHitDamage = 5.0f;
+    [SerializeField] int _coinValue = 0;
 
     [SerializeField] GameObject _playerModel = null;
     [SerializeField] float _playerAnimIdleShakePower = 1;
@@ -25,6 +27,10 @@ public class Player : MonoBehaviour
     [SerializeField] float _laneRightPlayerPosX = 1.0f;
     [SerializeField] LayerMask _targetLayer;
     [SerializeField] float _targetradius = 5f;
+    [SerializeField] LayerMask _coinLayer;
+    [SerializeField] float _coinRadius = 1f;
+    [SerializeField] LayerMask _eventBoxLayer;
+    [SerializeField] float _eventBoxRadius = 1f;
 
     bool _isDead = false;
     bool _isTargetHit = false;
@@ -35,6 +41,16 @@ public class Player : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, _targetradius, _targetLayer);
         return hits.Length > 0;
+    }
+    Collider[] GetCoinInRange()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, _coinRadius, _coinLayer);
+        return hits;
+    }
+    Collider[] GetEventBoxInRange()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, _eventBoxRadius, _eventBoxLayer);
+        return hits;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -111,6 +127,33 @@ public class Player : MonoBehaviour
             _isTargetHit = false;
         }
 
+        {
+            var coins = GetCoinInRange();
+            if (coins.Length > 0)
+            {
+                foreach (var coin in coins)
+                {
+                    _coinValue++;
+                    Destroy(coin.gameObject);
+                }
+            }
+        }
+        {
+            var eventBoxes = GetEventBoxInRange();
+            if (eventBoxes.Length > 0)
+            {
+                foreach (var eventBox in eventBoxes)
+                {
+                    var box = eventBox.GetComponent<EventBox>();
+                    if (box != null)
+                    {
+                        box.MiniGameStart();
+                    }
+                    Destroy(eventBox.gameObject);
+                }
+            }
+        }
+
         _energy -= _energyCost;
 
         if (_energy <= 0)
@@ -122,9 +165,10 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
             Debug.Log("Player is dead.");
         }
-
+        
         s_energy = _energy;
         s_energyMax = _energyMax;
+        s_coin = _coinValue;
     }
 
     //private void OnTriggerEnter(Collider other)
@@ -159,5 +203,10 @@ public class Player : MonoBehaviour
     public static float GetEnergy()
     {
         return s_energy;
+    }
+
+    public static int GetCoin()
+    {
+        return s_coin;
     }
 }
