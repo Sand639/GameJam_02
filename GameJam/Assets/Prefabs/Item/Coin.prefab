@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Coin
   scoreValue: 10
+  _rotateSpeed: 5
 --- !u!1001 &2781554366110847786
 PrefabInstance:
   m_ObjectHideFlags: 0
