@@ -9,11 +9,15 @@ public class MapGenerator : MonoBehaviour
     [Header("プレイヤーの後ろの削除基準座標（Z軸）")]
     public float deleteZ = -15f;
 
-    [Header("マップパーツのプレハブリスト")]
+    [Header("マップパーツのプレハブリスト（ランダム生成用）")]
     public List<GameObject> mapPrefabs;
 
     [Header("画面内に常に維持するマップの枚数")]
     public int initialSpawnCount = 5;
+
+    [Header("【追加】最初に順番に配置したいプレハブ")]
+    [Tooltip("ここに登録したプレハブが最初から順番に生成されます。initialSpawnCountより少ない場合、残りはランダム生成になります。")]
+    public List<GameObject> startingPrefabs = new List<GameObject>();
 
     [Header("--- イベントボックスの設定 ---")]
     [Tooltip("プレハブの中にあるイベントボックスの『オブジェクト名』を正確に入力してください")]
@@ -33,7 +37,16 @@ public class MapGenerator : MonoBehaviour
         // 最初に画面内に配置するマップを生成
         for (int i = 0; i < initialSpawnCount; i++)
         {
-            SpawnMap(Random.Range(0, mapPrefabs.Count));
+            // startingPrefabsに指定があれば、それを順番に生成する
+            if (i < startingPrefabs.Count && startingPrefabs[i] != null)
+            {
+                SpawnMap(startingPrefabs[i]);
+            }
+            else
+            {
+                // 指定枠がない、または使い切った場合は通常通りランダム生成
+                SpawnMap(mapPrefabs[Random.Range(0, mapPrefabs.Count)]);
+            }
         }
     }
 
@@ -67,8 +80,9 @@ public class MapGenerator : MonoBehaviour
                 if (worldEndZ < deleteZ)
                 {
                     RemoveOldestMap();
-                    // 新しいマップを一番奥に追加
-                    SpawnMap(Random.Range(0, mapPrefabs.Count));
+
+                    // 【変更】追加される新しいマップは常にランダム
+                    SpawnMap(mapPrefabs[Random.Range(0, mapPrefabs.Count)]);
                 }
             }
         }
@@ -76,11 +90,10 @@ public class MapGenerator : MonoBehaviour
 
     /// <summary>
     /// リストの最後尾のマップにピッタリくっつけてマップを生成する
+    /// 【変更】引数をインデックスからGameObject(プレハブ本体)にしました
     /// </summary>
-    void SpawnMap(int prefabIndex)
+    void SpawnMap(GameObject prefab)
     {
-        GameObject prefab = mapPrefabs[prefabIndex];
-
         BoxCollider boxCol = prefab.GetComponent<BoxCollider>();
         if (boxCol == null)
         {
@@ -92,7 +105,7 @@ public class MapGenerator : MonoBehaviour
         float scaleZ = prefab.transform.localScale.z;
         float localGridStartZ = (boxCol.center.z - (boxCol.size.z / 2f)) * scaleZ;
 
-        // 【超重要変更点】目標とするZ座標（1つ前のマップの出口）を計算
+        // 目標とするZ座標（1つ前のマップの出口）を計算
         float targetZ = 0f;
         if (activeMaps.Count > 0)
         {
