@@ -172,6 +172,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
+      propertyPath: showEventBoxCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529429886715779098, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: forwardSpawnDistance
       value: 20
       objectReference: {fileID: 0}
@@ -223,6 +227,7 @@ PrefabInstance:
       propertyPath: 'startingPrefabs.Array.data[2]'
       value: 
       objectReference: {fileID: 3829613075534453874, guid: 04b73b980c01cdc44a177bf687f4d47c, type: 3}
+
     - target: {fileID: 6925224391869385147, guid: 2a388756f31b739409b040401f0f735f, type: 3}
       propertyPath: m_Name
       value: MapManager
