@@ -26,7 +26,8 @@ public class ScoreManager : MonoBehaviour
     void Awake()
     {
         instance = this;
-    }
+
+	}
     void Start()
     {
         UpdateScore();
@@ -69,4 +70,9 @@ public class ScoreManager : MonoBehaviour
     {
         scoreText.text = "Score : " + score.ToString("0000");
     }
+
+    public int GetScore()
+    {
+        return score;
+	}
 }
