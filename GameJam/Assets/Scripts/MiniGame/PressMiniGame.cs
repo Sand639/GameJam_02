@@ -23,6 +23,9 @@ public class PressMiniGame : MonoBehaviour
 
     [Header("ゲージの参照")]
     public Slider gaugeSlider;
+    [Header("パラメータ")]
+    [SerializeField]
+    float _gageAddAmount = 0.35f;
 
     private bool isPlaying = false;
     private float currentTimer;
@@ -117,13 +120,12 @@ public class PressMiniGame : MonoBehaviour
         if (miniGamePanel != null) miniGamePanel.SetActive(false);
         Time.timeScale = 1f;
 
-        //  /  5は補正
-        float recoveryPercentage = Mathf.Clamp01((float)currentScore / maxScore / 5);
-        Debug.Log($"ミニゲーム終了！ 連打回数: {currentScore} 回。 燃料を {recoveryPercentage * 100}% 回復！");
+        float recoveryPercentage = Mathf.Clamp01((float)currentScore / maxScore * _gageAddAmount) * 100;
 
-        //ここに燃料を追加するコードを追加してください
+        Debug.Log($"ミニゲーム終了！ 連打回数: {currentScore} 回。 燃料を {recoveryPercentage}% 回復！");
 
-        // 例: Player.Instance.AddFuel(recoveryPercentage);
+        //燃料を追加する
+        Player.RequestAddEnergy(recoveryPercentage);
 
     }
 
