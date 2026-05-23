@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ScorePopup : MonoBehaviour
 {
+    [Header("スコアポップアップのスピード")]
     public float speed = 50f;
 
     void Update()
